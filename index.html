@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Destination A2 - Progress Test 1 (Units 1-21)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Font: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@500;600&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 45%, #f5f3ff 100%);
+      min-height: 100vh;
+    }
+    
+    /* Interactive Highlight Styles */
+    .hl-yellow { background-color: #fef08a !important; color: #1e293b; border-radius: 2px; }
+    .hl-green  { background-color: #bbf7d0 !important; color: #1e293b; border-radius: 2px; }
+    .hl-pink   { background-color: #fbcfe8 !important; color: #1e293b; border-radius: 2px; }
+    .hl-blue   { background-color: #bae6fd !important; color: #1e293b; border-radius: 2px; }
+
+    .test-input {
+      transition: all 0.2s ease-in-out;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .test-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+    .status-correct {
+      border-color: #10b981 !important;
+      background-color: #ecfdf5 !important;
+      color: #065f46 !important;
+      font-weight: 700;
+    }
+    .status-wrong {
+      border-color: #ef4444 !important;
+      background-color: #fef2f2 !important;
+      color: #991b1b !important;
+      font-weight: 700;
+    }
+    .reading-passage {
+      line-height: 2.1;
+      user-select: text;
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased pb-28">
+
+  <!-- Top Navigation & Floating Tools -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-indigo-100 shadow-sm transition-all">
+    <div class="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-700 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+          <i data-lucide="book-marked" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">Destination A2 • Progress Test 1</h1>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200">Units 1–21</span>
+          </div>
+          <p class="text-xs text-slate-500 font-medium">30 câu hỏi (Grammar, Vocabulary & Passives)</p>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Floating Highlighter Quick Palette Trigger -->
+        <div class="hidden sm:flex items-center bg-slate-100 border border-slate-200/80 rounded-xl p-1 gap-1">
+          <span class="text-[11px] font-bold text-slate-500 px-2 flex items-center gap-1">
+            <i data-lucide="highlighter" class="w-3.5 h-3.5 text-indigo-600"></i> Bút nhớ:
+          </span>
+          <button onclick="setHighlightColor('yellow')" title="Màu Vàng" class="w-6 h-6 rounded-lg bg-yellow-300 hover:scale-110 transition border border-yellow-400 active:scale-95"></button>
+          <button onclick="setHighlightColor('green')" title="Màu Xanh lá" class="w-6 h-6 rounded-lg bg-green-300 hover:scale-110 transition border border-green-400 active:scale-95"></button>
+          <button onclick="setHighlightColor('pink')" title="Màu Hồng" class="w-6 h-6 rounded-lg bg-pink-300 hover:scale-110 transition border border-pink-400 active:scale-95"></button>
+          <button onclick="setHighlightColor('blue')" title="Màu Xanh dương" class="w-6 h-6 rounded-lg bg-sky-300 hover:scale-110 transition border border-sky-400 active:scale-95"></button>
+          <button onclick="clearCurrentSelectionHighlight()" title="Xoá highlight đoạn chọn" class="px-2 h-6 text-[11px] font-bold text-slate-600 bg-white hover:bg-slate-50 rounded border border-slate-200 flex items-center gap-1">
+            <i data-lucide="eraser" class="w-3 h-3"></i> Tẩy
+          </button>
+        </div>
+
+        <button onclick="handleSubmit()" class="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold text-sm rounded-xl shadow-md shadow-indigo-200 hover:shadow-indigo-300 transition flex items-center gap-1.5 active:scale-95">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span>Nộp bài</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Floating Highlighter Bar -->
+  <div class="sm:hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-40 bg-white/95 backdrop-blur-md border border-indigo-200/80 shadow-2xl rounded-2xl px-3 py-2 flex items-center gap-2">
+    <span class="text-xs font-bold text-indigo-700 flex items-center gap-1">
+      <i data-lucide="highlighter" class="w-3.5 h-3.5"></i> Bút:
+    </span>
+    <button onclick="setHighlightColor('yellow')" class="w-6 h-6 rounded-full bg-yellow-300 border border-yellow-400"></button>
+    <button onclick="setHighlightColor('green')" class="w-6 h-6 rounded-full bg-green-300 border border-green-400"></button>
+    <button onclick="setHighlightColor('pink')" class="w-6 h-6 rounded-full bg-pink-300 border border-pink-400"></button>
+    <button onclick="setHighlightColor('blue')" class="w-6 h-6 rounded-full bg-sky-300 border border-sky-400"></button>
+    <button onclick="clearCurrentSelectionHighlight()" class="text-xs bg-slate-100 p-1.5 rounded-lg text-slate-600 font-bold flex items-center">
+      <i data-lucide="eraser" class="w-3.5 h-3.5"></i>
+    </button>
+  </div>
+
+  <!-- Main Container -->
+  <main class="max-w-4xl mx-auto px-4 pt-6 space-y-8">
+
+    <!-- Hero Banner Card -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-violet-900 p-6 sm:p-8 text-white shadow-xl shadow-indigo-200/50">
+      <div class="relative z-10 max-w-2xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-semibold uppercase tracking-wider text-indigo-200 mb-3 border border-white/10">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300"></i> Destination A2 Kiểm tra tổng hợp
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Progress Test 1 (Units 1 - 21)</h2>
+        <p class="text-indigo-100 text-sm sm:text-base leading-relaxed">
+          Đề gồm <strong>4 bài tập lớn (30 câu hỏi)</strong> kiểm tra toàn diện cấu trúc ngữ pháp thì quá khứ/hiện tại, bị động, đại từ và từ loại (Word Formation).
+        </p>
+        <div class="mt-4 flex flex-wrap items-center gap-3 text-xs text-indigo-200 font-medium">
+          <span class="flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-lg">
+            <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-yellow-300"></i> Bôi đen văn bản để Highlight ghi nhớ
+          </span>
+          <span class="flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-lg">
+            <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-300"></i> Tự động chấm & giải thích song ngữ
+          </span>
+        </div>
+      </div>
+      <div class="absolute -right-12 -bottom-16 w-56 h-56 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+    </div>
+
+    <!-- ==========================================
+         PART A: GRAMMAR (1-9)
+         ========================================== -->
+    <section class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 transition-all hover:shadow-md">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 mb-6 gap-2">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-100">Phần A</span>
+            <span class="text-xs font-semibold text-slate-400">9 Câu • 9 Điểm</span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mt-1.5">Grammar: Form of the Words (Ngữ pháp chia từ)</h3>
+          <p class="text-xs sm:text-sm text-slate-500">Biến đổi từ in hoa ở cuối dòng sao cho đúng ngữ pháp và thì của đoạn văn.</p>
+        </div>
+        <button onclick="toggleSectionTranslation('A')" class="self-start sm:self-auto text-xs font-bold text-indigo-600 bg-indigo-50/80 hover:bg-indigo-100 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
+          <i data-lucide="languages" class="w-3.5 h-3.5"></i> <span id="toggleText-A">Xem Dịch nghĩa đoạn văn</span>
+        </button>
+      </div>
+
+      <!-- Reading Passage Card -->
+      <div class="reading-passage p-5 sm:p-7 rounded-2xl bg-slate-50/70 border border-slate-200/80 text-slate-800 text-base sm:text-[17px] leading-loose space-y-4">
+        
+        <p>
+          Last week my best friend Maria and I went shopping. She wanted to buy a present for 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-indigo-600">1.</strong>
+            <input type="text" id="qA1" placeholder="SHE" class="test-input w-28 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center uppercase tracking-wide bg-white shadow-inner focus:border-indigo-500">
+          </span>
+          mother.
+        </p>
+
+        <p>
+          While we 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-indigo-600">2.</strong>
+            <input type="text" id="qA2" placeholder="WALK" class="test-input w-36 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-indigo-500">
+          </span>
+          in the street, we met our friend Vassili.
+        </p>
+
+        <p>
+          He 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-indigo-600">3.</strong>
+            <input type="text" id="qA3" placeholder="BE" class="test-input w-24 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-indigo-500">
+          </span>
+          alone and he looked a bit unhappy.
+        </p>
+
+        <p>
+          We 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-indigo-600">4.</strong>
+            <input type="text" id="qA4" placeholder="ASK" class="test-input w-28 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-indigo-500">
+          </span>
+          him if he wanted to come with us to the shops.
+        </p>
+
+        <p>
+          When we arrived at the shopping centre, we noticed some people 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-indigo-600">5.</strong>
+            <input type="text" id="qA5" placeholder="WAIT" class="test-input w-28 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-indigo-500">
+          </span>
+          outside a new shop.
+        </p>
+
+        <p>
+          Vassili said, 'Let's go and see what 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-indigo-600">6.</strong>
+            <input type="text" id="qA6" placeholder="HAPPEN" class="test-input w-36 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-indigo-500">
+          </span>
+          over there!'
+        </p>
+
+        <p>
+          But Maria 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-indigo-600">7.</strong>
+            <input type="text" id="qA7" placeholder="NOT WANT" class="test-input w-36 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-indigo-500">
+          </span>
+          to go because she was in a hurry and needed to find her mum's present.
+        </p>
+
+        <p>
+          'I have a feeling that you 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-indigo-600">8.</strong>
+            <input type="text" id="qA8" placeholder="FIND" class="test-input w-32 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-indigo-500">
+          </span>
+          a present for your mum at that shop,' said Vassili. So, we went over.
+        </p>
+
+        <p>
+          It was a fantastic gift shop! Maria 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-indigo-600">9.</strong>
+            <input type="text" id="qA9" placeholder="BUY" class="test-input w-28 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-indigo-500">
+          </span>
+          a lovely present for her mum, and then we went home.
+        </p>
+      </div>
+
+      <!-- Passage Translation Card (Collapsible) -->
+      <div id="transBox-A" class="hidden mt-4 p-4 rounded-2xl bg-indigo-50/50 border border-indigo-100 text-sm text-slate-700 space-y-2">
+        <h5 class="font-bold text-indigo-900 flex items-center gap-1.5">
+          <i data-lucide="book" class="w-4 h-4 text-indigo-600"></i> Bản dịch nghĩa tiếng Việt (Phần A):
+        </h5>
+        <p class="leading-relaxed">
+          Tuần trước, bạn thân nhất của tôi là Maria và tôi đã đi mua sắm. Cô ấy muốn mua một món quà cho mẹ <strong>của cô ấy (her)</strong>. Trong khi chúng tôi <strong>đang đi bộ (were walking)</strong> trên phố, chúng tôi bắt gặp bạn mình là Vassili. Cậu ấy <strong>ở (was)</strong> một mình và trông có vẻ hơi buồn. Chúng tôi <strong>đã hỏi (asked)</strong> cậu ấy xem có muốn đi mua sắm cùng chúng tôi không. Khi đến trung tâm thương mại, chúng tôi nhận thấy một vài người <strong>đang đợi (waiting)</strong> bên ngoài một cửa hàng mới. Vassili nói: "Hãy cùng đi xem chuyện gì <strong>đang diễn ra (is happening)</strong> đằng kia nào!". Nhưng Maria <strong>đã không muốn (didn't want)</strong> đi vì cô ấy đang vội và cần tìm quà cho mẹ. "Tớ có linh cảm rằng cậu <strong>sẽ tìm thấy (will find)</strong> một món quà cho mẹ cậu ở cửa hàng đó đấy", Vassili nói. Vì vậy, chúng tôi đã ghé qua. Đó là một cửa hàng quà tặng tuyệt vời! Maria <strong>đã mua (bought)</strong> một món quà xinh xắn cho mẹ, và sau đó chúng tôi về nhà.
+        </p>
+      </div>
+
+      <!-- Dynamic Explanations Box -->
+      <div id="exp-container-A" class="hidden mt-5 space-y-2.5"></div>
+    </section>
+
+    <!-- ==========================================
+         PART B: WORD FORMATION (1-6)
+         ========================================== -->
+    <section class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 transition-all hover:shadow-md">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 mb-6 gap-2">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-violet-700 bg-violet-50 px-2.5 py-1 rounded-lg border border-violet-100">Phần B</span>
+            <span class="text-xs font-semibold text-slate-400">6 Câu • 6 Điểm</span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mt-1.5">Word Formation (Cấu tạo từ vựng)</h3>
+          <p class="text-xs sm:text-sm text-slate-500">Biến đổi từ loại (Danh từ, Tính từ, Danh từ chỉ người...) phù hợp với ngữ cảnh đoạn văn.</p>
+        </div>
+        <button onclick="toggleSectionTranslation('B')" class="self-start sm:self-auto text-xs font-bold text-violet-600 bg-violet-50/80 hover:bg-violet-100 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
+          <i data-lucide="languages" class="w-3.5 h-3.5"></i> <span id="toggleText-B">Xem Dịch nghĩa đoạn văn</span>
+        </button>
+      </div>
+
+      <div class="reading-passage p-5 sm:p-7 rounded-2xl bg-slate-50/70 border border-slate-200/80 text-slate-800 text-base sm:text-[17px] leading-loose space-y-4">
+        <p>
+          Maypole dancing is a 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-violet-600">1.</strong>
+            <input type="text" id="qB1" placeholder="TRADITION" class="test-input w-36 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center uppercase tracking-wide bg-white shadow-inner focus:border-violet-500">
+          </span>
+          dance in some parts of Britain.
+        </p>
+
+        <p>
+          In this dance, there is a tall pole in the middle of a field. On it, there are 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-violet-600">2.</strong>
+            <input type="text" id="qB2" placeholder="DECORATE" class="test-input w-36 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center uppercase tracking-wide bg-white shadow-inner focus:border-violet-500">
+          </span>
+          of flowers, flags and other symbols.
+        </p>
+
+        <p>
+          The 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-violet-600">3.</strong>
+            <input type="text" id="qB3" placeholder="DANCE" class="test-input w-32 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center uppercase tracking-wide bg-white shadow-inner focus:border-violet-500">
+          </span>
+          dance around it, each holding a coloured ribbon.
+        </p>
+
+        <p>
+          Another 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-violet-600">4.</strong>
+            <input type="text" id="qB4" placeholder="FAME" class="test-input w-32 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center uppercase tracking-wide bg-white shadow-inner focus:border-violet-500">
+          </span>
+          British tradition is the Cheese-Rolling Festival in Gloucestershire.
+        </p>
+
+        <p>
+          This is a 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-violet-600">5.</strong>
+            <input type="text" id="qB5" placeholder="COMPETE" class="test-input w-36 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center uppercase tracking-wide bg-white shadow-inner focus:border-violet-500">
+          </span>
+          where a large round cheese is rolled down a hill and people run to try and catch it.
+        </p>
+
+        <p>
+          There is a lot of 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-violet-600">6.</strong>
+            <input type="text" id="qB6" placeholder="EXCITE" class="test-input w-36 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center uppercase tracking-wide bg-white shadow-inner focus:border-violet-500">
+          </span>
+          as people watch the race and laugh at the runners.
+        </p>
+      </div>
+
+      <!-- Passage Translation Card -->
+      <div id="transBox-B" class="hidden mt-4 p-4 rounded-2xl bg-violet-50/50 border border-violet-100 text-sm text-slate-700 space-y-2">
+        <h5 class="font-bold text-violet-900 flex items-center gap-1.5">
+          <i data-lucide="book" class="w-4 h-4 text-violet-600"></i> Bản dịch nghĩa tiếng Việt (Phần B):
+        </h5>
+        <p class="leading-relaxed">
+          Múa cột Maypole là một điệu múa <strong>truyền thống (traditional)</strong> ở một số nơi tại nước Anh. Trong điệu múa này, có một cây cột cao dựng giữa cánh đồng. Trên cột có các <strong>vật trang trí (decorations)</strong> bằng hoa lá, cờ và các biểu tượng khác. Các <strong>vũ công (dancers)</strong> nhảy múa quanh cây cột, mỗi người cầm một dải ruy băng màu sắc. Một truyền thống khác cũng rất <strong>nổi tiếng (famous)</strong> của người Anh là Lễ hội Lăn Phô mai ở Gloucestershire. Đây là một <strong>cuộc thi (competition)</strong> nơi một tảng phô mai tròn lớn được lăn xuống đồi và mọi người chạy đua để cố bắt lấy nó. Có rất nhiều <strong>sự phấn khích/hào hứng (excitement)</strong> khi mọi người theo dõi cuộc đua và cười vui trước các đấu thủ.
+        </p>
+      </div>
+
+      <div id="exp-container-B" class="hidden mt-5 space-y-2.5"></div>
+    </section>
+
+    <!-- ==========================================
+         PART C: THE MOSCOW ART THEATRE (1-9)
+         ========================================== -->
+    <section class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 transition-all hover:shadow-md">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 mb-6 gap-2">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">Phần C</span>
+            <span class="text-xs font-semibold text-slate-400">9 Câu • 9 Điểm</span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mt-1.5">Grammar & Passive Voice: The Moscow Art Theatre</h3>
+          <p class="text-xs sm:text-sm text-slate-500">Biến đổi từ in hoa (đặc biệt chú ý câu bị động, quá khứ, hiện tại hoàn thành và tính từ sở hữu).</p>
+        </div>
+        <button onclick="toggleSectionTranslation('C')" class="self-start sm:self-auto text-xs font-bold text-emerald-600 bg-emerald-50/80 hover:bg-emerald-100 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
+          <i data-lucide="languages" class="w-3.5 h-3.5"></i> <span id="toggleText-C">Xem Dịch nghĩa đoạn văn</span>
+        </button>
+      </div>
+
+      <div class="reading-passage p-5 sm:p-7 rounded-2xl bg-slate-50/70 border border-slate-200/80 text-slate-800 text-base sm:text-[17px] leading-loose space-y-4">
+        
+        <p>
+          The Moscow Art Theatre is a theatre company in Moscow. It 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-emerald-600">1.</strong>
+            <input type="text" id="qC1" placeholder="CREATE" class="test-input w-36 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-emerald-500">
+          </span>
+          at the end of the 19th century by Stanislavski and Nemirovich-Danchenko.
+        </p>
+
+        <p>
+          The two men 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-emerald-600">2.</strong>
+            <input type="text" id="qC2" placeholder="MEET" class="test-input w-24 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-emerald-500">
+          </span>
+          for the first time at two o'clock for lunch and they left at eight o'clock the next morning!
+        </p>
+
+        <p>
+          When the Art Theatre produced Anton Chekhov's work, it became very successful. Because of 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-emerald-600">3.</strong>
+            <input type="text" id="qC3" placeholder="IT" class="test-input w-24 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-emerald-500">
+          </span>
+          success, the theatre started using a seagull as a logo.
+        </p>
+
+        <p>
+          Over the years, many important actors worked there and some great plays 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-emerald-600">4.</strong>
+            <input type="text" id="qC4" placeholder="PERFORM" class="test-input w-36 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-emerald-500">
+          </span>
+          on the Art Theatre's stage.
+        </p>
+
+        <p>
+          Later, the company faced some difficulties and 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-emerald-600">5.</strong>
+            <input type="text" id="qC5" placeholder="HAVE" class="test-input w-24 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-emerald-500">
+          </span>
+          to change the way they worked. For example, they 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-emerald-600">6.</strong>
+            <input type="text" id="qC6" placeholder="NOT CAN" class="test-input w-32 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-emerald-500">
+          </span>
+          choose what plays to produce without asking for permission.
+        </p>
+
+        <p>
+          In 1987, the theatre 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-emerald-600">7.</strong>
+            <input type="text" id="qC7" placeholder="DIVIDE" class="test-input w-36 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-emerald-500">
+          </span>
+          into two different groups: the Chekhov Moscow Art Theatre and the Gorky Moscow Art Theatre.
+        </p>
+
+        <p>
+          Oleg Tabakov 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-emerald-600">8.</strong>
+            <input type="text" id="qC8" placeholder="BE" class="test-input w-28 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-emerald-500">
+          </span>
+          the Chekhov Moscow Art Theatre artistic director since 2000.
+        </p>
+
+        <p>
+          The Chekhov Moscow Art Theatre 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-emerald-600">9.</strong>
+            <input type="text" id="qC9" placeholder="LOCATE" class="test-input w-32 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center lowercase tracking-wide bg-white shadow-inner focus:border-emerald-500">
+          </span>
+          just off Tverskaya Street, near Red Square.
+        </p>
+
+      </div>
+
+      <!-- Passage Translation Card -->
+      <div id="transBox-C" class="hidden mt-4 p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100 text-sm text-slate-700 space-y-2">
+        <h5 class="font-bold text-emerald-900 flex items-center gap-1.5">
+          <i data-lucide="book" class="w-4 h-4 text-emerald-600"></i> Bản dịch nghĩa tiếng Việt (Phần C):
+        </h5>
+        <p class="leading-relaxed">
+          Nhà hát Nghệ thuật Mát-xcơ-va là một đoàn kịch nghệ ở Mát-xcơ-va. Nó <strong>đã được thành lập (was created)</strong> vào cuối thế kỷ 19 bởi Stanislavski và Nemirovich-Danchenko. Hai người đàn ông <strong>đã gặp nhau (met)</strong> lần đầu tiên vào lúc 2 giờ chiều để ăn trưa và họ chỉ rời đi vào lúc 8 giờ sáng ngày hôm sau! Khi Nhà hát Nghệ thuật dàn dựng tác phẩm của Anton Chekhov, nó đã trở nên vô cùng thành công. Nhờ thành công <strong>của nó (its)</strong>, nhà hát bắt đầu sử dụng hình ảnh chim hải âu làm logo. Trải qua năm tháng, nhiều diễn viên gạo cội đã làm việc tại đây và một số vở kịch xuất chúng <strong>đã được công diễn (were performed)</strong> trên sân khấu của Nhà hát Nghệ thuật. Về sau, đoàn kịch đối mặt với một số khó khăn và <strong>đã phải (had)</strong> thay đổi cách thức hoạt động. Chẳng hạn, họ <strong>đã không thể (couldn't)</strong> tự chọn vở kịch nào để dàn dựng nếu không xin phép trước. Vào năm 1987, nhà hát <strong>đã được chia tách (was divided)</strong> thành hai nhóm khác nhau: Nhà hát Nghệ thuật Chekhov Mát-xcơ-va và Nhà hát Nghệ thuật Gorky Mát-xcơ-va. Oleg Tabakov <strong>đã là (has been)</strong> giám đốc nghệ thuật của Nhà hát Nghệ thuật Chekhov Mát-xcơ-va kể từ năm 2000. Nhà hát Nghệ thuật Chekhov Mát-xcơ-va <strong>nằm tọa lạc (is located)</strong> ngay gần phố Tverskaya, gần Quảng trường Đỏ.
+        </p>
+      </div>
+
+      <div id="exp-container-C" class="hidden mt-5 space-y-2.5"></div>
+    </section>
+
+    <!-- ==========================================
+         PART D: WORD FORMATION (1-6)
+         ========================================== -->
+    <section class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 transition-all hover:shadow-md">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 mb-6 gap-2">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-100">Phần D</span>
+            <span class="text-xs font-semibold text-slate-400">6 Câu • 6 Điểm</span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mt-1.5">Word Formation: Learning Spanish (Cấu tạo từ vựng)</h3>
+          <p class="text-xs sm:text-sm text-slate-500">Biến đổi từ viết hoa cho phù hợp với cấu trúc ngữ pháp (danh từ, tiền tố phủ định un-, trạng từ...).</p>
+        </div>
+        <button onclick="toggleSectionTranslation('D')" class="self-start sm:self-auto text-xs font-bold text-rose-600 bg-rose-50/80 hover:bg-rose-100 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
+          <i data-lucide="languages" class="w-3.5 h-3.5"></i> <span id="toggleText-D">Xem Dịch nghĩa đoạn văn</span>
+        </button>
+      </div>
+
+      <div class="reading-passage p-5 sm:p-7 rounded-2xl bg-slate-50/70 border border-slate-200/80 text-slate-800 text-base sm:text-[17px] leading-loose space-y-4">
+        
+        <p>
+          Everybody says that 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-rose-600">1.</strong>
+            <input type="text" id="qD1" placeholder="EDUCATE" class="test-input w-36 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center uppercase tracking-wide bg-white shadow-inner focus:border-rose-500">
+          </span>
+          is very important. So I wanted to learn something new and I went to have Spanish lessons.
+        </p>
+
+        <p>
+          Because I was a 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-rose-600">2.</strong>
+            <input type="text" id="qD2" placeholder="BEGIN" class="test-input w-32 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center uppercase tracking-wide bg-white shadow-inner focus:border-rose-500">
+          </span>,
+          our teacher spoke to us in Spanish and English.
+        </p>
+
+        <p>
+          At first, we had lots of 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-rose-600">3.</strong>
+            <input type="text" id="qD3" placeholder="DIFFICULT" class="test-input w-36 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center uppercase tracking-wide bg-white shadow-inner focus:border-rose-500">
+          </span>
+          with the grammar.
+        </p>
+
+        <p>
+          But she gave us a lot of 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-rose-600">4.</strong>
+            <input type="text" id="qD4" placeholder="ENCOURAGE" class="test-input w-40 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center uppercase tracking-wide bg-white shadow-inner focus:border-rose-500">
+          </span>.
+          She said it was all right to make mistakes.
+        </p>
+
+        <p>
+          For the first few months, I was 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-rose-600">5.</strong>
+            <input type="text" id="qD5" placeholder="ABLE" class="test-input w-32 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center uppercase tracking-wide bg-white shadow-inner focus:border-rose-500">
+          </span>
+          to speak any Spanish at all but I kept trying.
+        </p>
+
+        <p>
+          It wasn't easy at first, but now I can speak Spanish 
+          <span class="inline-flex items-center gap-1 mx-1.5">
+            <strong class="text-xs font-extrabold text-rose-600">6.</strong>
+            <input type="text" id="qD6" placeholder="AMAZE" class="test-input w-36 px-2.5 py-1 border border-slate-300 rounded-lg text-sm font-semibold text-center uppercase tracking-wide bg-white shadow-inner focus:border-rose-500">
+          </span>
+          well.
+        </p>
+
+      </div>
+
+      <!-- Passage Translation Card -->
+      <div id="transBox-D" class="hidden mt-4 p-4 rounded-2xl bg-rose-50/50 border border-rose-100 text-sm text-slate-700 space-y-2">
+        <h5 class="font-bold text-rose-900 flex items-center gap-1.5">
+          <i data-lucide="book" class="w-4 h-4 text-rose-600"></i> Bản dịch nghĩa tiếng Việt (Phần D):
+        </h5>
+        <p class="leading-relaxed">
+          Mọi người đều nói rằng <strong>giáo dục / việc học hành (education)</strong> rất quan trọng. Vì vậy tôi muốn học một điều gì đó mới mẻ và tôi đã đến tham gia các buổi học tiếng Tây Ban Nha. Bởi vì tôi là <strong>người mới bắt đầu (beginner)</strong>, giáo viên của chúng tôi đã nói chuyện với chúng tôi bằng cả tiếng Tây Ban Nha lẫn tiếng Anh. Ban đầu, chúng tôi gặp rất nhiều <strong>khó khăn (difficulties)</strong> với ngữ pháp. Nhưng cô ấy đã dành cho chúng tôi rất nhiều <strong>sự động viên/khích lệ (encouragement)</strong>. Cô ấy nói rằng mắc lỗi là chuyện hoàn toàn bình thường. Trong vài tháng đầu tiên, tôi <strong>không thể (unable)</strong> nói được bất cứ câu tiếng Tây Ban Nha nào nhưng tôi vẫn kiên trì cố gắng. Ban đầu việc đó không hề dễ dàng, nhưng giờ đây tôi có thể nói tiếng Tây Ban Nha tốt một cách <strong>đáng kinh ngạc (amazingly)</strong>.
+        </p>
+      </div>
+
+      <div id="exp-container-D" class="hidden mt-5 space-y-2.5"></div>
+    </section>
+
+    <!-- Bottom Actions / Submit Area -->
+    <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border border-slate-800">
+      <div class="text-center md:text-left">
+        <h4 class="text-xl font-bold flex items-center justify-center md:justify-start gap-2">
+          <i data-lucide="clipboard-check" class="w-5 h-5 text-indigo-400"></i>
+          Hoàn thành bài kiểm tra Progress Test 1?
+        </h4>
+        <p class="text-slate-300 text-sm mt-1 max-w-xl">
+          Sau khi nộp bài, hệ thống sẽ tự động tính điểm, hiển thị đáp án đúng/sai với màu sắc phân biệt và cung cấp bản giải thích ngữ pháp chi tiết cho từng câu.
+        </p>
+      </div>
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <button onclick="handleReset()" class="px-5 py-3 rounded-xl border border-slate-600 hover:bg-slate-800 font-semibold text-sm transition">
+          Làm lại từ đầu
+        </button>
+        <button onclick="handleSubmit()" class="px-7 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white font-bold text-sm shadow-lg shadow-indigo-500/25 transition transform active:scale-95 flex items-center gap-2">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          <span>Nộp bài & Chấm điểm</span>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Score & Result Modal -->
+  <div id="resultModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl transform transition-all text-center relative border border-slate-100">
+      
+      <!-- Trophy / Rating Icon Badge -->
+      <div id="modalIconContainer" class="w-20 h-20 mx-auto mb-4 rounded-3xl flex items-center justify-center text-4xl shadow-inner transition-transform"></div>
+
+      <h3 id="modalTitle" class="text-2xl font-black text-slate-900">Kết quả bài làm</h3>
+      <p class="text-xs text-slate-500 mt-1 mb-5">Destination A2 • Progress Test 1 (Units 1-21)</p>
+
+      <!-- Score Card -->
+      <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 mb-5">
+        <div class="flex justify-between items-center text-sm font-semibold text-slate-600 mb-2">
+          <span>Tổng điểm đạt được:</span>
+          <span id="modalScoreText" class="text-2xl font-black text-indigo-600">0 / 30</span>
+        </div>
+        <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+          <div id="modalProgressBar" class="h-full bg-gradient-to-r from-indigo-500 to-violet-600 transition-all duration-1000" style="width: 0%"></div>
+        </div>
+        <div class="flex justify-between text-xs text-slate-500 mt-2 font-medium">
+          <span id="modalCorrectText">Đúng 0 / 30 câu</span>
+          <span id="modalPercentText" class="font-bold text-indigo-600">0%</span>
+        </div>
+      </div>
+
+      <!-- Detail breakdown by Part -->
+      <div class="grid grid-cols-4 gap-2 text-center text-xs mb-5">
+        <div class="p-2 rounded-xl bg-indigo-50 border border-indigo-100">
+          <span class="block text-slate-500 font-bold">Phần A</span>
+          <span id="scoreA" class="font-black text-indigo-700 text-sm">0/9</span>
+        </div>
+        <div class="p-2 rounded-xl bg-violet-50 border border-violet-100">
+          <span class="block text-slate-500 font-bold">Phần B</span>
+          <span id="scoreB" class="font-black text-violet-700 text-sm">0/6</span>
+        </div>
+        <div class="p-2 rounded-xl bg-emerald-50 border border-emerald-100">
+          <span class="block text-slate-500 font-bold">Phần C</span>
+          <span id="scoreC" class="font-black text-emerald-700 text-sm">0/9</span>
+        </div>
+        <div class="p-2 rounded-xl bg-rose-50 border border-rose-100">
+          <span class="block text-slate-500 font-bold">Phần D</span>
+          <span id="scoreD" class="font-black text-rose-700 text-sm">0/6</span>
+        </div>
+      </div>
+
+      <p id="modalFeedback" class="text-sm font-medium text-slate-600 mb-6 leading-relaxed"></p>
+
+      <div class="flex gap-3 justify-center">
+        <button onclick="closeModal()" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md transition">
+          Xem Chi Tiết Đáp Án & Lời Giải
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. DATABASE: ANSWERS, BILINGUAL EXPLANATIONS, TRANSLATIONS
+    // =========================================================================
+    const testData = {
+      // PART A (1-9)
+      A: {
+        title: "Phần A (Ngữ pháp thì & Đại từ)",
+        items: {
+          qA1: {
+            keys: ["her"],
+            display: "her",
+            word: "SHE (đại từ) → her (tính từ sở hữu)",
+            reason: "Đứng trước danh từ 'mother' ta dùng tính từ sở hữu 'her' (mẹ của cô ấy)."
+          },
+          qA2: {
+            keys: ["were walking"],
+            display: "were walking",
+            word: "WALK (động từ) → were walking (Quá khứ tiếp diễn)",
+            reason: "Cấu trúc 'While + Past Continuous': một hành động đang diễn ra (chúng tôi đang đi bộ: were walking) thì có hành động khác xen vào (met our friend)."
+          },
+          qA3: {
+            keys: ["was"],
+            display: "was",
+            word: "BE → was (Quá khứ đơn)",
+            reason: "Chủ ngữ 'He' ở ngôi thứ 3 số ít, sự việc xảy ra trong quá khứ kể lại ('looked unhappy') -> to be là 'was'."
+          },
+          qA4: {
+            keys: ["asked"],
+            display: "asked",
+            word: "ASK → asked (Quá khứ đơn)",
+            reason: "Tường thuật chuỗi hành động đã kết thúc trong quá khứ -> động từ thêm -ed ('asked')."
+          },
+          qA5: {
+            keys: ["waiting"],
+            display: "waiting",
+            word: "WAIT → waiting (V-ing)",
+            reason: "Cấu trúc giác quan/nhận thức: 'notice + somebody + V-ing' (chứng kiến ai đó đang làm gì) -> 'waiting'."
+          },
+          qA6: {
+            keys: ["is happening", "'s happening"],
+            display: "is happening",
+            word: "HAPPEN → is happening (Hiện tại tiếp diễn)",
+            reason: "Câu nói trực tiếp: 'Let's go and see what is happening over there!' (Hãy ra xem điều gì ĐANG xảy ra ở đằng kia) -> Thì hiện tại tiếp diễn."
+          },
+          qA7: {
+            keys: ["didn't want", "did not want"],
+            display: "didn't want / did not want",
+            word: "NOT WANT → didn't want (Quá khứ đơn phủ định)",
+            reason: "Câu chuyện ở thì quá khứ ('she was in a hurry') -> Dạng phủ định của thì quá khứ đơn là 'didn't want'."
+          },
+          qA8: {
+            keys: ["will find", "'ll find"],
+            display: "will find / 'll find",
+            word: "FIND → will find (Tương lai đơn)",
+            reason: "Vassili đưa ra dự đoán mang tính linh cảm ('I have a feeling that...') -> Dùng thì tương lai đơn 'will find'."
+          },
+          qA9: {
+            keys: ["bought"],
+            display: "bought",
+            word: "BUY → bought (Quá khứ đơn)",
+            reason: "Hành động đã xảy ra và kết thúc trong quá khứ (kế tiếp với 'went home') -> Quá khứ bất quy tắc của buy là 'bought'."
+          }
+        }
+      },
+
+      // PART B (1-6)
+      B: {
+        title: "Phần B (Word Formation - Từ loại)",
+        items: {
+          qB1: {
+            keys: ["traditional"],
+            display: "traditional",
+            word: "TRADITION (n) → traditional (adj)",
+            reason: "Đứng trước danh từ 'dance' cần một tính từ bổ nghĩa: 'traditional dance' (điệu nhảy truyền thống)."
+          },
+          qB2: {
+            keys: ["decorations"],
+            display: "decorations",
+            word: "DECORATE (v) → decorations (danh từ số nhiều)",
+            reason: "Sau cấu trúc 'there are' cần danh từ số nhiều: 'decorations' (những đồ trang trí, vật trang trí)."
+          },
+          qB3: {
+            keys: ["dancers"],
+            display: "dancers",
+            word: "DANCE (v) → dancers (danh từ chỉ người số nhiều)",
+            reason: "Đóng vai trò làm chủ ngữ thực hiện hành động 'dance around it, each holding...' -> Dùng danh từ chỉ người số nhiều 'dancers' (các vũ công)."
+          },
+          qB4: {
+            keys: ["famous"],
+            display: "famous",
+            word: "FAME (n) → famous (adj)",
+            reason: "Đứng trước cụm danh từ 'British tradition' cần tính từ: 'famous' (nổi tiếng)."
+          },
+          qB5: {
+            keys: ["competition"],
+            display: "competition",
+            word: "COMPETE (v) → competition (n)",
+            reason: "Sau mạo từ 'a' cần một danh từ số ít: 'competition' (cuộc thi, cuộc tranh tài)."
+          },
+          qB6: {
+            keys: ["excitement"],
+            display: "excitement",
+            word: "EXCITE (v) → excitement (danh từ không đếm được)",
+            reason: "Sau cụm từ 'a lot of' cần một danh từ chỉ cảm xúc/tâm trạng: 'excitement' (sự hào hứng, phấn khích)."
+          }
+        }
+      },
+
+      // PART C (1-9)
+      C: {
+        title: "Phần C (Moscow Art Theatre - Bị động & Ngữ pháp)",
+        items: {
+          qC1: {
+            keys: ["was created"],
+            display: "was created",
+            word: "CREATE → was created (Quá khứ đơn bị động)",
+            reason: "Chủ ngữ là 'It' (Nhà hát), có tác nhân 'by Stanislavski...' ở thế kỷ 19 -> Thể bị động quá khứ đơn: 'was created'."
+          },
+          qC2: {
+            keys: ["met"],
+            display: "met",
+            word: "MEET → met (Quá khứ đơn)",
+            reason: "Kể về sự kiện trong quá khứ ('for the first time at two o'clock') -> Dùng động từ quá khứ 'met'."
+          },
+          qC3: {
+            keys: ["its"],
+            display: "its",
+            word: "IT → its (Tính từ sở hữu)",
+            reason: "Trước danh từ 'success' cần tính từ sở hữu: 'Because of its success' (Bởi vì sự thành công của nó - lưu ý không có dấu phẩy 's)."
+          },
+          qC4: {
+            keys: ["were performed"],
+            display: "were performed",
+            word: "PERFORM → were performed (Quá khứ đơn bị động)",
+            reason: "Chủ ngữ 'some great plays' (những vở kịch lớn - số nhiều) được công diễn trên sân khấu -> Bị động quá khứ số nhiều 'were performed'."
+          },
+          qC5: {
+            keys: ["had"],
+            display: "had",
+            word: "HAVE → had (Quá khứ đơn)",
+            reason: "Cấu trúc quá khứ 'had to + V' (đã phải làm gì), song hành với thì quá khứ 'faced some difficulties'."
+          },
+          qC6: {
+            keys: ["couldn't", "could not"],
+            display: "couldn't / could not",
+            word: "NOT CAN → couldn't / could not",
+            reason: "Quá khứ của động từ khuyết thiếu can là could; thể phủ định là 'could not' hoặc viết tắt 'couldn't' (đã không thể tự chọn vở kịch)."
+          },
+          qC7: {
+            keys: ["was divided"],
+            display: "was divided",
+            word: "DIVIDE → was divided (Quá khứ đơn bị động)",
+            reason: "Năm 1987, nhà hát được chia tách làm hai nhóm -> Thể bị động thì quá khứ đơn: 'was divided into'."
+          },
+          qC8: {
+            keys: ["has been"],
+            display: "has been",
+            word: "BE → has been (Hiện tại hoàn thành)",
+            reason: "Dấu hiệu thời gian 'since 2000' (kể từ năm 2000 đến nay) -> Dùng thì hiện tại hoàn thành với chủ ngữ số ít: 'has been'."
+          },
+          qC9: {
+            keys: ["is located"],
+            display: "is located",
+            word: "LOCATE → is located (Hiện tại đơn bị động)",
+            reason: "Diễn tả vị trí địa lý của một tòa nhà: 'is located' (tọa lạc tại, nằm ở)."
+          }
+        }
+      },
+
+      // PART D (1-6)
+      D: {
+        title: "Phần D (Word Formation - Học tiếng Tây Ban Nha)",
+        items: {
+          qD1: {
+            keys: ["education"],
+            display: "education",
+            word: "EDUCATE (v) → education (n)",
+            reason: "Làm chủ ngữ trong mệnh đề 'that ... is very important' cần một danh từ: 'education' (nền giáo dục / việc học hành)."
+          },
+          qD2: {
+            keys: ["beginner"],
+            display: "beginner",
+            word: "BEGIN (v) → beginner (danh từ chỉ người)",
+            reason: "Sau mạo từ 'a' cần danh từ chỉ người mới học: 'a beginner' (người mới bắt đầu)."
+          },
+          qD3: {
+            keys: ["difficulties"],
+            display: "difficulties",
+            word: "DIFFICULT (adj) → difficulties (danh từ số nhiều)",
+            reason: "Sau 'lots of' cần danh từ; cụm từ 'have difficulties with' (gặp khó khăn với...) -> Dùng dạng số nhiều 'difficulties'."
+          },
+          qD4: {
+            keys: ["encouragement"],
+            display: "encouragement",
+            word: "ENCOURAGE (v) → encouragement (danh từ)",
+            reason: "Sau 'a lot of' cần một danh từ không đếm được: 'encouragement' (sự khích lệ, động viên)."
+          },
+          qD5: {
+            keys: ["unable"],
+            display: "unable",
+            word: "ABLE (adj) → unable (adj phủ định)",
+            reason: "Ngữ cảnh: vài tháng đầu tôi 'không thể' nói được chút nào nhưng vẫn cố ('but I kept trying') -> Cần tính từ mang nghĩa phủ định 'unable' ('be unable to do sth' = không thể làm gì)."
+          },
+          qD6: {
+            keys: ["amazingly"],
+            display: "amazingly",
+            word: "AMAZE (v) → amazingly (adv)",
+            reason: "Đứng trước tính từ/trạng từ 'well' cần một trạng từ bổ nghĩa mức độ: 'amazingly well' (tốt một cách kinh ngạc)."
+          }
+        }
+      }
+    };
+
+    // =========================================================================
+    // 2. HIGHLIGHTER TOOL SYSTEM
+    // =========================================================================
+    let currentHighlightColor = 'yellow';
+
+    function setHighlightColor(color) {
+      currentHighlightColor = color;
+      highlightSelection(color);
+    }
+
+    function highlightSelection(color) {
+      const selection = window.getSelection();
+      if (!selection.rangeCount || selection.isCollapsed) return;
+
+      const range = selection.getRangeAt(0);
+      const span = document.createElement('span');
+      span.className = `hl-${color}`;
+      
+      try {
+        span.appendChild(range.extractContents());
+        range.insertNode(span);
+        selection.removeAllRanges();
+      } catch (err) {
+        console.warn("Highlight range cross boundary:", err);
+      }
+    }
+
+    function clearCurrentSelectionHighlight() {
+      const selection = window.getSelection();
+      if (!selection.rangeCount || selection.isCollapsed) return;
+      const range = selection.getRangeAt(0);
+
+      // Simple unwrap if inside highlight span
+      let container = range.commonAncestorContainer;
+      if (container.nodeType === 3) container = container.parentNode;
+      if (container.classList && (container.classList.contains('hl-yellow') || container.classList.contains('hl-green') || container.classList.contains('hl-pink') || container.classList.contains('hl-blue'))) {
+        const parent = container.parentNode;
+        while (container.firstChild) parent.insertBefore(container.firstChild, container);
+        parent.removeChild(container);
+      }
+      selection.removeAllRanges();
+    }
+
+    // Toggle Translations
+    function toggleSectionTranslation(sec) {
+      const box = document.getElementById(`transBox-${sec}`);
+      const txt = document.getElementById(`toggleText-${sec}`);
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden');
+        txt.innerText = 'Ẩn Dịch nghĩa đoạn văn';
+      } else {
+        box.classList.add('hidden');
+        txt.innerText = 'Xem Dịch nghĩa đoạn văn';
+      }
+    }
+
+    // =========================================================================
+    // 3. GRADING AND EXPLANATION LOGIC
+    // =========================================================================
+    function handleSubmit() {
+      let totalScore = 0;
+      const sectionScores = { A: 0, B: 0, C: 0, D: 0 };
+      const totalPossible = 30;
+
+      // Loop through all sections
+      ['A', 'B', 'C', 'D'].forEach(sec => {
+        const secData = testData[sec];
+        const container = document.getElementById(`exp-container-${sec}`);
+        container.innerHTML = '';
+        container.classList.remove('hidden');
+
+        let htmlExp = `
+          <div class="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+            <h5 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="help-circle" class="w-4 h-4 text-indigo-600"></i> Lời giải & Đáp án chi tiết ${secData.title}:
+            </h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
+        `;
+
+        Object.keys(secData.items).forEach((qKey, idx) => {
+          const item = secData.items[qKey];
+          const input = document.getElementById(qKey);
+          const userVal = input ? input.value.trim().toLowerCase() : '';
+
+          // Match answer
+          const isCorrect = item.keys.some(k => k.toLowerCase() === userVal);
+          if (isCorrect) {
+            totalScore++;
+            sectionScores[sec]++;
+          }
+
+          // Apply input styling
+          if (input) {
+            input.classList.remove('status-correct', 'status-wrong');
+            input.classList.add(isCorrect ? 'status-correct' : 'status-wrong');
+          }
+
+          // Build explanation card
+          htmlExp += `
+            <div class="p-3 rounded-xl ${isCorrect ? 'bg-emerald-50/70 border border-emerald-200' : 'bg-rose-50/70 border border-rose-200'}">
+              <div class="flex items-center justify-between font-bold text-sm mb-1">
+                <span class="${isCorrect ? 'text-emerald-800' : 'text-rose-800'}">
+                  Câu ${idx + 1}: ${item.display}
+                </span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${isCorrect ? 'bg-emerald-200 text-emerald-800' : 'bg-rose-200 text-rose-800'}">
+                  ${isCorrect ? 'Đúng (+1đ)' : 'Chưa đúng'}
+                </span>
+              </div>
+              <p class="text-slate-600 mb-1"><strong>Biến đổi:</strong> ${item.word}</p>
+              <p class="text-slate-600 mb-1"><strong>Bạn điền:</strong> ${userVal || '<em class="text-slate-400">bỏ trống</em>'}</p>
+              <p class="text-slate-500"><strong>Giải thích:</strong> ${item.reason}</p>
+            </div>
+          `;
+        });
+
+        htmlExp += `</div></div>`;
+        container.innerHTML = htmlExp;
+
+        // Automatically show translation for best review experience
+        document.getElementById(`transBox-${sec}`).classList.remove('hidden');
+        document.getElementById(`toggleText-${sec}`).innerText = 'Ẩn Dịch nghĩa đoạn văn';
+      });
+
+      // Update section breakdown in modal
+      document.getElementById('scoreA').innerText = `${sectionScores.A}/9`;
+      document.getElementById('scoreB').innerText = `${sectionScores.B}/6`;
+      document.getElementById('scoreC').innerText = `${sectionScores.C}/9`;
+      document.getElementById('scoreD').innerText = `${sectionScores.D}/6`;
+
+      // Show Result Modal
+      showScoreModal(totalScore, totalPossible);
+      lucide.createIcons();
+    }
+
+    function showScoreModal(score, total) {
+      const modal = document.getElementById('resultModal');
+      const percent = Math.round((score / total) * 100);
+      
+      document.getElementById('modalScoreText').innerText = `${score} / ${total}`;
+      document.getElementById('modalCorrectText').innerText = `Đúng ${score} / ${total} câu`;
+      document.getElementById('modalPercentText').innerText = `${percent}%`;
+      document.getElementById('modalProgressBar').style.width = `${percent}%`;
+
+      const iconBox = document.getElementById('modalIconContainer');
+      const feedback = document.getElementById('modalFeedback');
+
+      if (percent >= 85) {
+        iconBox.className = "w-20 h-20 mx-auto mb-4 rounded-3xl flex items-center justify-center text-4xl shadow-lg bg-emerald-100 text-emerald-600 border border-emerald-200";
+        iconBox.innerHTML = "🏆";
+        feedback.innerText = `Tuyệt vời! Bạn đạt ${percent}% điểm số. Bạn đã làm chủ hoàn toàn các kiến thức ngữ pháp và cấu tạo từ vựng quan trọng từ Unit 1 đến 21!`;
+        // Fire Confetti animation
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      } else if (percent >= 60) {
+        iconBox.className = "w-20 h-20 mx-auto mb-4 rounded-3xl flex items-center justify-center text-4xl shadow-lg bg-indigo-100 text-indigo-600 border border-indigo-200";
+        iconBox.innerHTML = "🌟";
+        feedback.innerText = `Làm rất tốt! Bạn đạt ${percent}% điểm số. Hãy kéo xuống bên dưới để rà soát các câu ngữ pháp bị động và word formation cần cải thiện nhé.`;
+      } else {
+        iconBox.className = "w-20 h-20 mx-auto mb-4 rounded-3xl flex items-center justify-center text-4xl shadow-lg bg-amber-100 text-amber-600 border border-amber-200";
+        iconBox.innerHTML = "💡";
+        feedback.innerText = `Bạn đạt ${percent}% điểm số. Hãy đọc kỹ phần dịch nghĩa song ngữ và lời giải chi tiết cho từng phần để củng cố lại bài học nhé!`;
+      }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('resultModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleReset() {
+      // Clear inputs
+      document.querySelectorAll('.test-input').forEach(input => {
+        input.value = '';
+        input.classList.remove('status-correct', 'status-wrong');
+      });
+
+      // Clear explanations
+      ['A', 'B', 'C', 'D'].forEach(sec => {
+        const expBox = document.getElementById(`exp-container-${sec}`);
+        if (expBox) {
+          expBox.innerHTML = '';
+          expBox.classList.add('hidden');
+        }
+        document.getElementById(`transBox-${sec}`).classList.add('hidden');
+        document.getElementById(`toggleText-${sec}`).innerText = 'Xem Dịch nghĩa đoạn văn';
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Initialize icons
+    window.onload = function() {
+      lucide.createIcons();
+    };
+  </script>
+</body>
+</html>
